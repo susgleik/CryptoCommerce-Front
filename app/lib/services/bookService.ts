@@ -15,7 +15,7 @@ const getAuthHeaders = () => {
 export async function getBooks(page: number = 1, itemsPerPage: number = 10): Promise<BooksResponse> {
   try {
     const response = await fetch(
-      `http://3.94.122.163/api/v1/books/?page=${page}&items_per_page=${itemsPerPage}`,
+      `http://54.205.8.73/api/v1/books/?page=${page}&items_per_page=${itemsPerPage}`,
       {
         headers: getAuthHeaders(),
       }
@@ -38,7 +38,7 @@ export async function getBooks(page: number = 1, itemsPerPage: number = 10): Pro
 export async function getBookById(bookId: number): Promise<Book> {
   try {
     const response = await fetch(
-      `http://3.94.122.163/api/v1/books/${bookId}`,
+      `http://54.205.8.73/api/v1/books/${bookId}`,
       {
         headers: getAuthHeaders(),
       }
@@ -61,7 +61,7 @@ export async function getBookById(bookId: number): Promise<Book> {
 export async function updateBook(bookId: number, bookData: CreateBookDTO): Promise<Book> {
   try {
     const response = await fetch(
-      `http://3.94.122.163/api/v1/books/${bookId}`,
+      `http://54.205.8.73/api/v1/books/${bookId}`,
       {
         method: 'PUT',
         headers: getAuthHeaders(),
@@ -87,7 +87,7 @@ export async function updateBook(bookId: number, bookData: CreateBookDTO): Promi
 export async function createBook(bookData: CreateBookDTO): Promise<Book> {
   try {
     const response = await fetch(
-      'http://3.94.122.163/api/v1/books/',
+      'http://54.205.8.73/api/v1/books/',
       {
         method: 'POST',
         headers: getAuthHeaders(),

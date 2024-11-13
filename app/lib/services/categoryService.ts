@@ -5,7 +5,7 @@ export async function getCategories(): Promise<Category[]> {
   
   try {
     const response = await fetch(
-      'http://3.94.122.163/api/v1/categories',
+      'http://54.205.8.73/api/v1/categories',
       {
         headers: {
           'Authorization': `Bearer ${token}`,
