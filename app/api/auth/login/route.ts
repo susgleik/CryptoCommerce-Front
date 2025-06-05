@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = LoginSchema.parse(body);
 
-    const response = await fetch('http://localhost:8000/api/login', {
+    const response = await fetch('http://localhost:8000/api/v1/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,21 +26,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (data.access_token) {
-      const response = NextResponse.json(
-        { message: 'Login exitoso' },
-        { status: 200 }
-      );
+     if (data.access_token) {
+      // Crear respuesta con cookies
+      const nextResponse = NextResponse.json({
+        access_token: data.access_token,  // Incluir el token
+        user: data.user,                 // Incluir datos del usuario
+        message: 'Login exitoso'
+      }, { status: 200 });
 
-      response.cookies.set('token', data.access_token, {
+      // Establecer cookie httpOnly
+      nextResponse.cookies.set('token', data.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 60 * 60 * 24 * 7 // 7 días
       });
 
-      return response;
+      return nextResponse;
     }
+
+    return NextResponse.json(
+      { error: 'Error en la autenticación' },
+      { status: 401 }
+    );
 
     return NextResponse.json(
       { error: 'Error en la autenticación' },

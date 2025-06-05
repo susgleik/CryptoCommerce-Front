@@ -3,7 +3,7 @@ import { LoginFormData, RegisterFormData, LoginResponse, AuthResponse } from '..
 
 export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
   try {
-    const response = await fetch('http://54.205.8.73/api/login', {  // Llamada directa a la API backend
+    const response = await fetch('/api/auth/login', {  // Llamada directa a la API backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
 
 export async function registerUser(data: RegisterFormData): Promise<AuthResponse> {
   try {
-    const response = await fetch('http://54.205.8.73/api/register', {  // Llamada directa a la API backend
+    const response = await fetch('/api/auth/register', {  // Llamada directa a la API backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +46,6 @@ export async function registerUser(data: RegisterFormData): Promise<AuthResponse
         email: data.email,
         username: data.username,
         password: data.password,
-        user_type: data.user_type
       }),
     });
 

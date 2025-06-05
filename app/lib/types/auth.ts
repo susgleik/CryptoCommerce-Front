@@ -9,10 +9,11 @@
     email: string;
     username: string;
     password: string;
-    user_type: 'common' | 'admin';
+  
   }
   
   export interface LoginResponse {
+    user?: string;
     access_token?: string;
     error?: string;
   }
