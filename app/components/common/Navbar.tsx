@@ -12,10 +12,14 @@ interface User {
 export default function Navbar() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     const userInfo = localStorage.getItem('userInfo');
-    if (userInfo) {
+    
+    if (token && userInfo) {
+      setIsAuthenticated(true);
       setUser(JSON.parse(userInfo));
     }
   }, []);
@@ -23,7 +27,9 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userInfo');
-    router.push('/auth/login');
+    setIsAuthenticated(false);
+    setUser(null);
+    router.push('/');
   };
 
   return (
@@ -32,7 +38,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link 
-              href="/home" 
+              href="/" 
               className="flex items-center text-xl font-bold text-blue-600"
             >
               📚 Book Store
@@ -40,6 +46,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-4">
+            {/* Enlaces para administradores */}
             {user?.user_type === 'admin' && (
               <div className="hidden md:flex items-center space-x-4">
                 <Link 
@@ -48,29 +55,40 @@ export default function Navbar() {
                 >
                   Crear Libro
                 </Link>
-                <Link 
-                  href="/home/books" 
-                  className="text-gray-600 hover:text-blue-600 hidden"
-                >
-                  Administrar Libros
-                </Link>
               </div>
             )}
 
-            <div className="flex items-center space-x-4">
-              {user && (
+            {/* Si está autenticado */}
+            {isAuthenticated && user ? (
+              <div className="flex items-center space-x-4">
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">{user.username}</p>
                   <p className="text-xs text-gray-500 capitalize">{user.user_type}</p>
                 </div>
-              )}
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Cerrar Sesión
-              </button>
-            </div>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
+            ) : (
+              /* Si NO está autenticado */
+              <div className="flex items-center space-x-3">
+                <Link 
+                  href="/auth/login" 
+                  className="inline-flex items-center px-3 py-1.5 border border-blue-600 text-sm font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Iniciar Sesión
+                </Link>
+                <Link 
+                  href="/auth/register" 
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Registrarse
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

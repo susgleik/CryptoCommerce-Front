@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = LoginSchema.parse(body);
 
-    const response = await fetch('http://localhost:8000/api/v1/login', {
+    const response = await fetch('http://localhost:8000/api/v1/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
     });
 
     const data = await response.json() as LoginResponse;
+    console.log('Response URL:', data);
 
     if (!response.ok) {
       return NextResponse.json(

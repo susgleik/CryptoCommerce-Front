@@ -11,6 +11,9 @@ export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
       },
       body: JSON.stringify(data),
     });
+    
+    console.log('Response URL:', response.url);
+    console.log('Response status:', response);
 
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
