@@ -1,97 +1,93 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Product } from '@/app/lib/types/product';
+import { getActiveProducts } from '@/app/lib/services/productService';
+import ProductCard from '@/app/components/products/ProductCard';
+import Navbar from '@/app/components/common/Navbar';
 
-interface User {
-  username: string;
-  user_type: 'common' | 'admin';
-}
-
-export default function Navbar() {
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userInfo = localStorage.getItem('userInfo');
-    
-    if (token && userInfo) {
-      setIsAuthenticated(true);
-      setUser(JSON.parse(userInfo));
-    }
+    // Obtener productos activos (público)
+    const fetchProducts = async () => {
+      try {
+        const response = await getActiveProducts(0, 100);
+        setProducts(response);
+        setError(null);
+      } catch (err) {
+        setError('Error al cargar los productos');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userInfo');
-    setIsAuthenticated(false);
-    setUser(null);
-    router.push('/');
-  };
-
-  return (
-    <nav className="bg-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link 
-              href="/" 
-              className="flex items-center text-xl font-bold text-blue-600"
-            >
-              📚 Book Store
-            </Link>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            {/* Enlaces para administradores */}
-            {user?.user_type === 'admin' && (
-              <div className="hidden md:flex items-center space-x-4">
-                <Link 
-                  href="/home/books/create" 
-                  className="text-gray-600 hover:text-blue-600"
-                >
-                  Crear Libro
-                </Link>
-              </div>
-            )}
-
-            {/* Si está autenticado */}
-            {isAuthenticated && user ? (
-              <div className="flex items-center space-x-4">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">{user.username}</p>
-                  <p className="text-xs text-gray-500 capitalize">{user.user_type}</p>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Cerrar Sesión
-                </button>
-              </div>
-            ) : (
-              /* Si NO está autenticado */
-              <div className="flex items-center space-x-3">
-                <Link 
-                  href="/auth/login" 
-                  className="inline-flex items-center px-3 py-1.5 border border-blue-600 text-sm font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Iniciar Sesión
-                </Link>
-                <Link 
-                  href="/auth/register" 
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                  Registrarse
-                </Link>
-              </div>
-            )}
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin mx-auto"></div>
+            <p className="mt-4 text-gray-600">Cargando productos...</p>
           </div>
         </div>
       </div>
-    </nav>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <p className="text-red-500 text-lg">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
+      {/* Contenido principal */}
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Nuestros Productos</h2>
+          <p className="text-gray-600">Descubre nuestra colección</p>
+        </div>
+
+        {products.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-lg">No hay productos disponibles en este momento</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <ProductCard 
+                key={product.product_id} 
+                product={product} 
+              />
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
   );
 }

@@ -2,7 +2,19 @@
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
-  /* config options here */
+  // configuration for images from external domains
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'static.nike.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.adidas.com',
+      },
+    ]
+  }
 }
  
 module.exports = nextConfig
