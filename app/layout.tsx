@@ -6,8 +6,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Book Store',
-  description: 'Tu tienda de libros en línea',
+  title: 'MyDrops',
+  description: 'your favorite ecommerce whit cryptocurrency payments',
 }
 
 export default function RootLayout({

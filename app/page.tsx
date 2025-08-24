@@ -5,6 +5,7 @@ import { Product } from '@/app/lib/types/product';
 import { getActiveProducts } from '@/app/lib/services/productService';
 import ProductCard from '@/app/components/products/ProductCard';
 import Navbar from '@/app/components/common/Navbar';
+import Loading from '@/app/components/common/Loading';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -33,12 +34,7 @@ export default function Home() {
     return (
       <div className="min-h-screen">
         <Navbar />
-        <div className="flex items-center justify-center py-20">
-          <div className="text-center">
-            <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin mx-auto"></div>
-            <p className="mt-4 text-gray-600">Cargando productos...</p>
-          </div>
-        </div>
+        <Loading />
       </div>
     );
   }

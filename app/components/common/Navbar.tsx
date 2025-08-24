@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Search } from 'lucide-react';
 
 interface User {
   username: string;
@@ -36,14 +37,94 @@ export default function Navbar() {
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link 
-              href="/" 
-              className="flex items-center text-xl font-bold text-blue-600"
-            >
-              📚 Book Store
-            </Link>
+           {/* Logo link redirect to home / */}
+            <div className="flex items-center">
+              <Link 
+                href="/" 
+                className="flex items-center text-xl font-bold text-black"
+              >
+                /X
+              </Link>
+            </div>
+            
+            {/* links container items */}
+          <div className="flex items-center gap-10">
+            {/* Home link */}
+            <div className='flex items-center'>
+              <Link 
+                href="/" 
+                className="text-black hover:text-blue-600 mr-6"
+              >
+                Home
+              </Link>
+            </div>
+
+            {/* Economy Link */}
+            <div className='flex items-center'>
+              <Link 
+                href="/" 
+                className="text-black hover:text-blue-600 mr-6"
+              >
+                Economy
+              </Link>
+            </div>
+
+            {/* Premium Link */}
+            <div className='flex items-center'>
+              <Link 
+                href="/" 
+                className="text-black hover:text-blue-600 mr-6"
+              >
+                Premium
+              </Link>
+            </div>
+
+
+            {/* Fast Drops Link */}
+            <div className='flex items-center'>
+              <Link 
+                href="/" 
+                className="text-black hover:text-blue-600 mr-6"
+              >
+                Fast Drops
+              </Link>
+            </div>
+
+            {/* Safety Link */}
+            <div className='flex items-center'>
+              <Link 
+                href="/" 
+                className="text-black hover:text-blue-600 mr-6"
+              >
+                Safety Link
+              </Link>
+            </div>
+
+            {/* FAQ Link */}
+            <div className='flex items-center'>
+              <Link 
+                href="/" 
+                className="text-black hover:text-blue-600 mr-6"
+              >
+                FAQ
+              </Link>
+            </div>
+
+            {/* Contact Link */}
+            <div className='flex items-center'>
+              <Link 
+                href="/" 
+                className="text-black hover:text-blue-600 mr-6"
+              >
+                Contact Link
+              </Link>
+            </div>
+
+            <Search className="w-5 h-5 text-black" />
+
           </div>
+
+
 
           <div className="flex items-center space-x-4">
             {/* Enlaces para administradores */}
@@ -77,15 +158,9 @@ export default function Navbar() {
               <div className="flex items-center space-x-3">
                 <Link 
                   href="/auth/login" 
-                  className="inline-flex items-center px-3 py-1.5 border border-blue-600 text-sm font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex items-center px-4 py-1.4 border-2 border-black text-sm font-medium rounded-2xl text-black bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  Iniciar Sesión
-                </Link>
-                <Link 
-                  href="/auth/register" 
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                  Registrarse
+                  LOGIN
                 </Link>
               </div>
             )}
