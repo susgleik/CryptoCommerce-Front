@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
       console.log('Admin login successful:', response)
       
       // Redirigir al dashboard admin
-      router.push('/admin/dashboard')
+      router.push('/admin')
       
     } catch (error: unknown) {
       if (
