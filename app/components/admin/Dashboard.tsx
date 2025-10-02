@@ -1,6 +1,5 @@
 'use client'
 
-//import { useState } from 'react'
 import ProductStats from './dashboard/ProductStats'
 import ActivityStats from './dashboard/ActivityStats'
 import ReviewsSection from './dashboard/ReviewsSection'
@@ -10,8 +9,8 @@ export default function Dashboard() {
     <div className="p-6">
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-2">Resumen general de la actividad de la tienda</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">Resumen general de la actividad de la tienda</p>
       </div>
 
       {/* Top Row - Stats */}

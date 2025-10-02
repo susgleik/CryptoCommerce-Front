@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { ThemeProvider } from '@/app/providers/ThemeProvider'
 
 export const metadata: Metadata = {
   title: 'MyDrops v1.0 - Admin Panel',
@@ -10,5 +11,14 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      {children}
+    </ThemeProvider>
+  )
 }
