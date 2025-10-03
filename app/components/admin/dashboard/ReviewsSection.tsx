@@ -24,7 +24,6 @@ export default function ReviewsSection() {
   const [selectedPeriod, setSelectedPeriod] = useState<FilterPeriod>('month')
   const [selectedRating, setSelectedRating] = useState<RatingFilter>('all')
 
-  // Datos simulados - aquí irían los datos reales de la API
   const mockReviews: Review[] = [
     {
       id: '1',
@@ -111,7 +110,7 @@ export default function ReviewsSection() {
           <StarIconSolid
             key={star}
             className={`h-4 w-4 ${
-              star <= rating ? 'text-yellow-400' : 'text-gray-300'
+              star <= rating ? 'text-yellow-400 dark:text-yellow-500' : 'text-gray-300 dark:text-gray-600'
             }`}
           />
         ))}
@@ -124,26 +123,26 @@ export default function ReviewsSection() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <ChatBubbleLeftRightIcon className="h-6 w-6 text-yellow-600 mr-2" />
-          <h2 className="text-xl font-semibold text-gray-900">Reviews de Productos</h2>
+          <ChatBubbleLeftRightIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-500 mr-2" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Reviews de Productos</h2>
         </div>
         
         {/* Filters */}
         <div className="flex space-x-3">
           {/* Period Filter */}
-          <div className="flex bg-gray-100 rounded-lg p-1">
+          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
             {(['day', 'week', 'month', 'year'] as FilterPeriod[]).map((period) => (
               <button
                 key={period}
                 onClick={() => setSelectedPeriod(period)}
                 className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                   selectedPeriod === period
-                    ? 'bg-white text-yellow-600 shadow-sm'
-                    : 'text-gray-600 hover:text-yellow-600'
+                    ? 'bg-white dark:bg-gray-600 text-yellow-600 dark:text-yellow-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400'
                 }`}
               >
                 {getPeriodLabel(period)}
@@ -152,15 +151,15 @@ export default function ReviewsSection() {
           </div>
 
           {/* Rating Filter */}
-          <div className="flex bg-gray-100 rounded-lg p-1">
+          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
             {(['all', '5', '4', '3', '2', '1'] as RatingFilter[]).map((rating) => (
               <button
                 key={rating}
                 onClick={() => setSelectedRating(rating)}
                 className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                   selectedRating === rating
-                    ? 'bg-white text-yellow-600 shadow-sm'
-                    : 'text-gray-600 hover:text-yellow-600'
+                    ? 'bg-white dark:bg-gray-600 text-yellow-600 dark:text-yellow-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400'
                 }`}
               >
                 {getRatingLabel(rating)}
@@ -173,13 +172,13 @@ export default function ReviewsSection() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Stats Overview */}
         <div className="lg:col-span-1">
-          <div className="bg-yellow-50 rounded-lg p-4 mb-4">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 mb-4">
             <div className="text-center">
-              <p className="text-3xl font-bold text-yellow-700">{reviewStats.average}</p>
+              <p className="text-3xl font-bold text-yellow-700 dark:text-yellow-400">{reviewStats.average}</p>
               <div className="flex justify-center my-2">
                 {renderStars(Math.round(reviewStats.average))}
               </div>
-              <p className="text-sm text-yellow-600">
+              <p className="text-sm text-yellow-600 dark:text-yellow-500">
                 Promedio de {reviewStats.total.toLocaleString()} reviews
               </p>
             </div>
@@ -187,20 +186,20 @@ export default function ReviewsSection() {
 
           {/* Rating Distribution */}
           <div className="space-y-2">
-            <h4 className="font-medium text-gray-900 mb-3">Distribución de Calificaciones</h4>
+            <h4 className="font-medium text-gray-900 dark:text-white mb-3">Distribución de Calificaciones</h4>
             {[5, 4, 3, 2, 1].map((rating) => (
               <div key={rating} className="flex items-center">
-                <span className="text-sm text-gray-600 w-3">{rating}</span>
-                <StarIconSolid className="h-4 w-4 text-yellow-400 mx-1" />
-                <div className="flex-1 bg-gray-200 rounded-full h-2 mx-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400 w-3">{rating}</span>
+                <StarIconSolid className="h-4 w-4 text-yellow-400 dark:text-yellow-500 mx-1" />
+                <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mx-2">
                   <div
-                    className="bg-yellow-400 h-2 rounded-full"
+                    className="bg-yellow-400 dark:bg-yellow-500 h-2 rounded-full"
                     style={{ 
                       width: `${getPercentage(reviewStats.distribution[rating as keyof typeof reviewStats.distribution])}%` 
                     }}
                   ></div>
                 </div>
-                <span className="text-sm text-gray-600 w-8">
+                <span className="text-sm text-gray-600 dark:text-gray-400 w-8">
                   {getPercentage(reviewStats.distribution[rating as keyof typeof reviewStats.distribution])}%
                 </span>
               </div>
@@ -211,45 +210,45 @@ export default function ReviewsSection() {
         {/* Recent Reviews */}
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
               Reviews Recientes - {getPeriodLabel(selectedPeriod)}
               {selectedRating !== 'all' && ` (${selectedRating} estrellas)`}
             </h3>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {filteredReviews.length} de {mockReviews.length} reviews
             </span>
           </div>
 
           <div className="space-y-4 max-h-96 overflow-y-auto">
             {filteredReviews.map((review) => (
-              <div key={review.id} className="border border-gray-200 rounded-lg p-4">
+              <div key={review.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center">
-                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+                    <div className="w-8 h-8 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center mr-3">
                       <span className="text-white font-medium text-sm">
                         {review.userName.charAt(0)}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">
                         {review.userName}
                         {review.verified && (
-                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
                             Verificado
                           </span>
                         )}
                       </p>
-                      <p className="text-xs text-gray-500">{review.productName}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{review.productName}</p>
                     </div>
                   </div>
                   <div className="text-right">
                     {renderStars(review.rating)}
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {new Date(review.date).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                   {review.comment}
                 </p>
               </div>
@@ -258,9 +257,9 @@ export default function ReviewsSection() {
 
           {filteredReviews.length === 0 && (
             <div className="text-center py-8">
-              <ChatBubbleLeftRightIcon className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No hay reviews</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <ChatBubbleLeftRightIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" />
+              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No hay reviews</h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 No se encontraron reviews para los filtros seleccionados.
               </p>
             </div>
@@ -269,14 +268,15 @@ export default function ReviewsSection() {
       </div>
 
       {/* Chart Placeholder */}
-      <div className="mt-6 p-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+      <div className="mt-6 p-8 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
         <div className="text-center">
-          <StarIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">Gráfico de Reviews</h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <StarIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Gráfico de Reviews</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Aquí se mostrará el gráfico de tendencias de reviews por período
           </p>
         </div>
       </div>
     </div>
-  )}
+  )
+}

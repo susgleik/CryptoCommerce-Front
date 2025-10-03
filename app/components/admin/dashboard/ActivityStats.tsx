@@ -79,48 +79,49 @@ export default function ActivityStats() {
   const getColorClasses = (color: string) => {
     const colors = {
       purple: {
-        bg: 'bg-purple-50',
-        icon: 'bg-purple-100 text-purple-600',
-        text: 'text-purple-700'
+        bg: 'bg-purple-50 dark:bg-purple-900/20',
+        icon: 'bg-purple-100 dark:bg-purple-800/50 text-purple-600 dark:text-purple-400',
+        text: 'text-purple-700 dark:text-purple-300'
       },
       blue: {
-        bg: 'bg-blue-50',
-        icon: 'bg-blue-100 text-blue-600',
-        text: 'text-blue-700'
+        bg: 'bg-blue-50 dark:bg-blue-900/20',
+        icon: 'bg-blue-100 dark:bg-blue-800/50 text-blue-600 dark:text-blue-400',
+        text: 'text-blue-700 dark:text-blue-300'
       },
       green: {
-        bg: 'bg-green-50',
-        icon: 'bg-green-100 text-green-600',
-        text: 'text-green-700'
+        bg: 'bg-green-50 dark:bg-green-900/20',
+        icon: 'bg-green-100 dark:bg-green-800/50 text-green-600 dark:text-green-400',
+        text: 'text-green-700 dark:text-green-300'
       },
       orange: {
-        bg: 'bg-orange-50',
-        icon: 'bg-orange-100 text-orange-600',
-        text: 'text-orange-700'
+        bg: 'bg-orange-50 dark:bg-orange-900/20',
+        icon: 'bg-orange-100 dark:bg-orange-800/50 text-orange-600 dark:text-orange-400',
+        text: 'text-orange-700 dark:text-orange-300'
       }
     }
     return colors[color as keyof typeof colors] || colors.blue
   }
 
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <UserGroupIcon className="h-6 w-6 text-purple-600 mr-2" />
-          <h2 className="text-xl font-semibold text-gray-900">Actividad de Usuarios</h2>
+          <UserGroupIcon className="h-6 w-6 text-purple-600 dark:text-purple-400 mr-2" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Actividad de Usuarios</h2>
         </div>
         
         {/* Filter Buttons */}
-        <div className="flex bg-gray-100 rounded-lg p-1">
+        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
           {(['day', 'month', 'year'] as FilterPeriod[]).map((period) => (
             <button
               key={period}
               onClick={() => setSelectedPeriod(period)}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                 selectedPeriod === period
-                  ? 'bg-white text-purple-600 shadow-sm'
-                  : 'text-gray-600 hover:text-purple-600'
+                  ? 'bg-white dark:bg-gray-600 text-purple-600 dark:text-purple-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400'
               }`}
             >
               {getPeriodLabel(period)}
@@ -139,12 +140,12 @@ export default function ActivityStats() {
                 <div className={`${colorClasses.icon} rounded-full p-2`}>
                   <metric.icon className="h-5 w-5" />
                 </div>
-                <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/50 px-2 py-1 rounded-full">
                   {metric.change}
                 </span>
               </div>
               <div>
-                <p className="text-sm text-gray-600 font-medium">{metric.title}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{metric.title}</p>
                 <p className={`text-xl font-bold ${colorClasses.text}`}>{metric.value}</p>
               </div>
             </div>
@@ -154,7 +155,7 @@ export default function ActivityStats() {
 
       {/* Activity Timeline */}
       <div className="mb-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
           Actividad Reciente - {getPeriodLabel(selectedPeriod)}
         </h3>
         <div className="space-y-3">
@@ -164,24 +165,24 @@ export default function ActivityStats() {
             { time: '09:45 AM', action: 'Producto agregado al carrito', user: 'comprador@email.com' },
             { time: '09:30 AM', action: 'Usuario inició sesión', user: 'usuario@email.com' }
           ].map((activity, index) => (
-            <div key={index} className="flex items-center p-3 bg-gray-50 rounded-lg">
+            <div key={index} className="flex items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
               <div className="flex-shrink-0 w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                <p className="text-xs text-gray-500">{activity.user}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{activity.action}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{activity.user}</p>
               </div>
-              <span className="text-xs text-gray-500">{activity.time}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Chart Placeholder */}
-      <div className="p-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+      <div className="p-8 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
         <div className="text-center">
-          <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">Gráfico de Actividad</h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Gráfico de Actividad</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Aquí se mostrará el gráfico de actividad de usuarios
           </p>
         </div>
