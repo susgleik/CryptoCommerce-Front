@@ -30,7 +30,6 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
   const [errors, setErrors] = useState<ProductFormErrors>({})
   const [loading, setLoading] = useState(false)
 
-  // Initialize form data when modal opens or product changes
   useEffect(() => {
     if (isOpen) {
       if (mode === 'edit' && product) {
@@ -40,7 +39,7 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
           description: product.description,
           online_stock: product.online_stock.toString(),
           sku: product.sku,
-          release_date: product.release_date.split('T')[0], // Format for date input
+          release_date: product.release_date.split('T')[0],
           is_featured: product.is_featured,
           is_active: product.is_active,
           product_type: product.product_type,
@@ -48,7 +47,6 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
           supplier_id: product.supplier_id?.toString() || ''
         })
       } else {
-        // Reset form for create mode
         setFormData({
           name: '',
           price: '',
@@ -130,7 +128,7 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
         product_type: formData.product_type,
         product_image: formData.product_image.trim() || undefined,
         supplier_id: formData.supplier_id ? parseInt(formData.supplier_id) : null,
-        category_ids: [] // Empty for now since we don't have category endpoints
+        category_ids: []
       }
 
       if (mode === 'create') {
@@ -154,7 +152,6 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
       [field]: value
     }))
     
-    // Clear error for this field when user starts typing
     if (errors[field as keyof ProductFormErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -169,18 +166,18 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         {/* Backdrop */}
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose}></div>
+        <div className="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-80 transition-opacity" onClick={onClose}></div>
 
         {/* Modal */}
-        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
+        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
               {mode === 'create' ? 'Crear Nuevo Producto' : 'Editar Producto'}
             </h3>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
@@ -188,8 +185,8 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
 
           {/* General Error */}
           {errors.general && (
-            <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
-              <p className="text-sm text-red-600">{errors.general}</p>
+            <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-3">
+              <p className="text-sm text-red-600 dark:text-red-400">{errors.general}</p>
             </div>
           )}
 
@@ -198,24 +195,24 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Name */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Nombre del Producto *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.name ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 ${
+                    errors.name ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                   }`}
                   placeholder="Ingresa el nombre del producto"
                 />
-                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
               </div>
 
               {/* Price */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Precio *
                 </label>
                 <input
@@ -224,17 +221,17 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
                   min="0"
                   value={formData.price}
                   onChange={(e) => handleInputChange('price', e.target.value)}
-                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.price ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                    errors.price ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                   }`}
                   placeholder="0.00"
                 />
-                {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price}</p>}
+                {errors.price && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.price}</p>}
               </div>
 
               {/* Stock */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Stock *
                 </label>
                 <input
@@ -242,56 +239,56 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
                   min="0"
                   value={formData.online_stock}
                   onChange={(e) => handleInputChange('online_stock', e.target.value)}
-                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.online_stock ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                    errors.online_stock ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                   }`}
                   placeholder="0"
                 />
-                {errors.online_stock && <p className="mt-1 text-sm text-red-600">{errors.online_stock}</p>}
+                {errors.online_stock && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.online_stock}</p>}
               </div>
 
               {/* SKU */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   SKU *
                 </label>
                 <input
                   type="text"
                   value={formData.sku}
                   onChange={(e) => handleInputChange('sku', e.target.value)}
-                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.sku ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                    errors.sku ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                   }`}
                   placeholder="SKU único del producto"
                 />
-                {errors.sku && <p className="mt-1 text-sm text-red-600">{errors.sku}</p>}
+                {errors.sku && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.sku}</p>}
               </div>
 
               {/* Release Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Fecha de Lanzamiento *
                 </label>
                 <input
                   type="date"
                   value={formData.release_date}
                   onChange={(e) => handleInputChange('release_date', e.target.value)}
-                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.release_date ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                    errors.release_date ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                   }`}
                 />
-                {errors.release_date && <p className="mt-1 text-sm text-red-600">{errors.release_date}</p>}
+                {errors.release_date && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.release_date}</p>}
               </div>
 
               {/* Product Type */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Tipo de Producto
                 </label>
                 <select
                   value={formData.product_type}
                   onChange={(e) => handleInputChange('product_type', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value="general">General</option>
                   <option value="electronics">Electrónicos</option>
@@ -304,45 +301,45 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
 
               {/* Description */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Descripción
                 </label>
                 <textarea
                   rows={3}
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   placeholder="Descripción del producto..."
                 />
               </div>
 
               {/* Product Image */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   URL de Imagen
                 </label>
                 <input
                   type="url"
                   value={formData.product_image}
                   onChange={(e) => handleInputChange('product_image', e.target.value)}
-                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.product_image ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                    errors.product_image ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
                   }`}
                   placeholder="https://ejemplo.com/imagen.jpg"
                 />
-                {errors.product_image && <p className="mt-1 text-sm text-red-600">{errors.product_image}</p>}
+                {errors.product_image && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.product_image}</p>}
               </div>
 
               {/* Supplier ID */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   ID del Proveedor
                 </label>
                 <input
                   type="number"
                   value={formData.supplier_id}
                   onChange={(e) => handleInputChange('supplier_id', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   placeholder="ID del proveedor (opcional)"
                 />
               </div>
@@ -354,9 +351,9 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
                     type="checkbox"
                     checked={formData.is_active}
                     onChange={(e) => handleInputChange('is_active', e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Producto activo</span>
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Producto activo</span>
                 </label>
 
                 <label className="flex items-center">
@@ -364,26 +361,26 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
                     type="checkbox"
                     checked={formData.is_featured}
                     onChange={(e) => handleInputChange('is_featured', e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Producto destacado</span>
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Producto destacado</span>
                 </label>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-transparent rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Guardando...' : mode === 'create' ? 'Crear Producto' : 'Guardar Cambios'}
               </button>
