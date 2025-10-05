@@ -13,6 +13,8 @@ import { Product, ProductFilters, ProductModalState } from '@/app/lib/types/prod
 import { productService } from '@/app/lib/services/productService'
 import ProductFormModal from './ProductFormModal'
 import DeleteConfirmModal from './DeleteConfirmModal'
+import Image from 'next/image'
+
 
 export default function ProductsDatabase() {
   const [products, setProducts] = useState<Product[]>([])
@@ -296,10 +298,12 @@ export default function ProductsDatabase() {
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-12 w-12">
                         {product.product_image ? (
-                          <img
+                          <Image
                             className="h-12 w-12 rounded-lg object-cover"
                             src={product.product_image}
                             alt={product.name}
+                            width={48}
+                            height={48}
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';

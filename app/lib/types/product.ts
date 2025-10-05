@@ -73,3 +73,32 @@ export interface ProductsResponse {
   items_per_page?: number;
   total_pages?: number;
 }
+
+export interface ProductFilters {
+  search: string;
+  category: string;
+  status: 'all' | 'active' | 'inactive' | 'out_of_stock';
+  is_featured: boolean | null;
+  product_type: string;
+  price_min: number | null;
+  price_max: number | null;
+}
+
+export interface ProductModalState {
+  isOpen: boolean;
+  mode: 'create' | 'edit' | 'view' | 'delete';
+  product?: Product;
+}
+
+export interface ProductFormErrors {
+  general?: string;
+  name?: string;
+  price?: string;
+  description?: string;
+  online_stock?: string;
+  sku?: string;
+  release_date?: string;
+  product_image?: string;
+  supplier_id?: string;
+  [key: string]: string | undefined;
+}

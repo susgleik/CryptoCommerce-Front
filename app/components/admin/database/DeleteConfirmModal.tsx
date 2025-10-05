@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Product } from '@/app/lib/types/product'
 import { productService } from '@/app/lib/services/productService'
+import Image from 'next/image'
 
 interface DeleteConfirmModalProps {
   isOpen: boolean
@@ -59,9 +60,11 @@ export default function DeleteConfirmModal({ isOpen, product, onClose, onConfirm
                 <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     {product.product_image && (
-                      <img
+                      <Image
                         src={product.product_image}
                         alt={product.name}
+                        width={48}
+                        height={48}
                         className="h-12 w-12 rounded-lg object-cover"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;

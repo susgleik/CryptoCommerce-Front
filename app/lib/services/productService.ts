@@ -1,28 +1,17 @@
 import { CreateProductDTO, Product, UpdateProductDTO } from "../types/product";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = '/api/products'; // ← Apunta a tus rutas Next.js
 
-// Helper function to get admin token
-const getAdminToken = (): string | null  => {
-  if (typeof window !== 'undefined'){
-    return localStorage.getItem('admin_token');
-  }
-  return null;
-};
-
-// Helper function to create headers with auth
 const createAuthHeaders = (): HeadersInit => {
-  const token = getAdminToken();
   return {
     'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `Bearer ${token}` })
   };
 };
 
 // public get - dont require auth
 export const getProducts = async (skip: number = 0, limit: number = 100): Promise<Product[]> => {
     try{
-        const response = await fetch(`${API_URL}/api/v1/products/?skip=${skip}&limit=${limit}`, {
+        const response = await fetch(`${API_URL}?skip=${skip}&limit=${limit}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -38,18 +27,16 @@ export const getProducts = async (skip: number = 0, limit: number = 100): Promis
         console.error('Error fetching products:', error);
         throw error;
     }
-
 }
 
 // public get by id - dont require auth
 export const getProductById = async (productId: number): Promise<Product> => {
     try{
-        const response = await fetch(`${API_URL}/api/v1/products/${productId}`, {
+        const response = await fetch(`${API_URL}/${productId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
-            
         });
         if (!response.ok){
             throw new Error(`Error fetching product by id: ${response.statusText}`);
@@ -88,7 +75,7 @@ export const getFeaturedProducts = async (skip: number = 0, limit: number = 100)
 // CREATE product - requieres admin auth
 export const createProduct = async (productData: CreateProductDTO): Promise<Product> => {
   try {
-    const response = await fetch(`${API_URL}/api/v1/products/`, {
+    const response = await fetch(`${API_URL}`, {
       method: 'POST',
       headers: createAuthHeaders(),
       body: JSON.stringify(productData)
@@ -110,10 +97,8 @@ export const createProduct = async (productData: CreateProductDTO): Promise<Prod
 // UPDATE product - requires admin auth
 export const updateProduct = async (productId: number, productData: UpdateProductDTO): Promise<Product> => {
   try {
-    // Prepare the data, excluding computed fields
     const updateData = {
       ...productData, 
-      // Remove computed fields that shouldn't be sent to the API
       supplier: undefined,
       categories: undefined,
       created_at: undefined,
@@ -121,7 +106,7 @@ export const updateProduct = async (productId: number, productData: UpdateProduc
       product_id: undefined
     };
 
-    const response = await fetch(`${API_URL}/api/v1/products/${productId}`, {
+    const response = await fetch(`${API_URL}/${productId}`, {
       method: 'PUT',
       headers: createAuthHeaders(),
       body: JSON.stringify(updateData)
@@ -143,7 +128,7 @@ export const updateProduct = async (productId: number, productData: UpdateProduc
 // DELETE product - requires admin auth 
 export const deleteProduct = async (productId: number) : Promise<boolean> => {
   try{
-    const response = await fetch(`${API_URL}/api/v1/products/${productId}`, {
+    const response = await fetch(`${API_URL}/${productId}`, {
       method: 'DELETE',
       headers: createAuthHeaders()
     });
@@ -163,7 +148,7 @@ export const deleteProduct = async (productId: number) : Promise<boolean> => {
 // ADMIN: Get all products with admin auth (for admin panel)
 export const getProductsAdmin = async (skip: number = 0, limit: number = 100): Promise<Product[]> => {
   try {
-    const response = await fetch(`${API_URL}/api/v1/products/?skip=${skip}&limit=${limit}`, {
+    const response = await fetch(`${API_URL}?skip=${skip}&limit=${limit}`, {
       method: 'GET',
       headers: createAuthHeaders()
     });
@@ -180,21 +165,17 @@ export const getProductsAdmin = async (skip: number = 0, limit: number = 100): P
   }
 };
 
-// Utility functions for admin panel
+// El resto del código permanece igual...
 export const productService = {
-  // Public methods
   getProducts,
   getProductById,
   getActiveProducts,
   getFeaturedProducts,
-  
-  // Admin methods
   getProductsAdmin,
   createProduct,
   updateProduct,
   deleteProduct,
   
-  // Validation helpers
   validateProductData: (productData: CreateProductDTO | UpdateProductDTO): string[] => {
     const errors: string[] = [];
     
@@ -217,7 +198,6 @@ export const productService = {
     return errors;
   },
   
-  // Format helpers
   formatPrice: (price: number): string => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -233,7 +213,6 @@ export const productService = {
     });
   },
   
-  // Status helpers
   getStatusLabel: (product: Product): string => {
     if (!product.is_active) return 'Inactivo';
     if (product.online_stock === 0) return 'Sin Stock';
