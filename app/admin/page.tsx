@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { adminAuthService } from '@/app/lib/services/adminAuthService'
 import type { AdminUser } from '@/app/lib/types/admin'
@@ -14,11 +14,7 @@ export default function AdminPage() {
   const [error, setError] = useState('')
   const router = useRouter()
 
-  useEffect(() => {
-    checkAdminAuth()
-  }, [])
-
-  const checkAdminAuth = async () => {
+  const checkAdminAuth = useCallback(async () => {
     try {
       const authData = await adminAuthService.verifyToken()
       
@@ -29,14 +25,23 @@ export default function AdminPage() {
         router.push('/admin/login')
       }
       
-    } catch (error: any) {
-      console.error('Error verificando autenticación admin:', error)
-      setError('Error verificando autenticación')
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error('Error verificando autenticación admin:', err)
+        setError(err.message || 'Error verificando autenticación')
+      } else {
+        console.error('Error verificando autenticación admin:', err)
+        setError('Error verificando autenticación')
+      }
       router.push('/admin/login')
     } finally {
       setLoading(false)
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    void checkAdminAuth()
+  }, [checkAdminAuth])
 
   if (loading) {
     return (
