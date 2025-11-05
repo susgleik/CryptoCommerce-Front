@@ -182,7 +182,7 @@ export default function ProductsDatabase() {
           <div>
             <select
               value={filters.status}
-              onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value as any }))}
+              onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value as 'all' | 'active' | 'inactive' | 'out_of_stock' }))}
               className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
               <option value="all">Todos los estados</option>
@@ -414,7 +414,8 @@ export default function ProductsDatabase() {
       {modalState.isOpen && modalState.mode === 'delete' && modalState.product && (
         <DeleteConfirmModal
           isOpen={modalState.isOpen}
-          product={modalState.product}
+          item={modalState.product}
+          itemType="product"
           onClose={handleCloseModal}
           onConfirm={handleProductDeleted}
         />

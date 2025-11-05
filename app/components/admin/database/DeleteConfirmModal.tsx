@@ -3,17 +3,20 @@
 import { useState } from 'react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Product } from '@/app/lib/types/product'
+import { Category } from '@/app/lib/types/category'
 import { productService } from '@/app/lib/services/productService'
+import { categoryService } from '@/app/lib/services/categoryService'
 import Image from 'next/image'
 
 interface DeleteConfirmModalProps {
   isOpen: boolean
-  product: Product
+  item: Product | Category
+  itemType: 'product' | 'category'
   onClose: () => void
   onConfirm: () => void
 }
 
-export default function DeleteConfirmModal({ isOpen, product, onClose, onConfirm }: DeleteConfirmModalProps) {
+export default function DeleteConfirmModal({ isOpen, item, itemType, onClose, onConfirm }: DeleteConfirmModalProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -22,15 +25,24 @@ export default function DeleteConfirmModal({ isOpen, product, onClose, onConfirm
     setError('')
 
     try {
-      await productService.deleteProduct(product.product_id)
+      if (itemType === 'product') {
+        await productService.deleteProduct((item as Product).product_id)
+      } else {
+        await categoryService.deactivateCategory((item as Category).category_id)
+      }
       onConfirm()
     } catch (error) {
-      console.error('Error deleting product:', error)
-      setError('Error al eliminar el producto. Por favor intenta de nuevo.')
+      console.error(`Error deleting ${itemType}:`, error)
+      setError(`Error al eliminar ${itemType === 'product' ? 'el producto' : 'la categoría'}. Por favor intenta de nuevo.`)
     } finally {
       setLoading(false)
     }
   }
+
+  const isProduct = itemType === 'product'
+  const product = isProduct ? (item as Product) : null
+  const category = !isProduct ? (item as Category) : null
+  const itemName = isProduct ? product!.name : category!.name
 
   if (!isOpen) return null
 
@@ -48,21 +60,22 @@ export default function DeleteConfirmModal({ isOpen, product, onClose, onConfirm
             </div>
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
               <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-                Eliminar Producto
+                {isProduct ? 'Eliminar Producto' : 'Desactivar Categoría'}
               </h3>
               <div className="mt-2">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  ¿Estás seguro que deseas eliminar el producto <strong className="text-gray-900 dark:text-white">&quot;{product.name}&quot;</strong>? 
-                  Esta acción no se puede deshacer.
+                  ¿Estás seguro que deseas {isProduct ? 'eliminar' : 'desactivar'} {isProduct ? 'el producto' : 'la categoría'} <strong className="text-gray-900 dark:text-white">&quot;{itemName}&quot;</strong>?
+                  {isProduct && ' Esta acción no se puede deshacer.'}
+                  {!isProduct && ' Esta categoría puede ser reactivada posteriormente.'}
                 </p>
-                
-                {/* Product Details */}
+
+                {/* Item Details */}
                 <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    {product.product_image && (
+                    {((isProduct && product?.product_image) || (!isProduct && category?.category_image)) && (
                       <Image
-                        src={product.product_image}
-                        alt={product.name}
+                        src={(isProduct ? product!.product_image : category!.category_image) || ''}
+                        alt={itemName}
                         width={48}
                         height={48}
                         className="h-12 w-12 rounded-lg object-cover"
@@ -73,11 +86,23 @@ export default function DeleteConfirmModal({ isOpen, product, onClose, onConfirm
                       />
                     )}
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{product.name}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">SKU: {product.sku}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Precio: {productService.formatPrice(product.price)}
-                      </p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{itemName}</p>
+                      {isProduct && product && (
+                        <>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">SKU: {product.sku}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Precio: {productService.formatPrice(product.price)}
+                          </p>
+                        </>
+                      )}
+                      {!isProduct && category && (
+                        <>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">ID: {category.category_id}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {category.description || 'Sin descripción'}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -98,7 +123,7 @@ export default function DeleteConfirmModal({ isOpen, product, onClose, onConfirm
               disabled={loading}
               className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 dark:bg-red-700 text-base font-medium text-white hover:bg-red-700 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Eliminando...' : 'Eliminar'}
+              {loading ? (isProduct ? 'Eliminando...' : 'Desactivando...') : (isProduct ? 'Eliminar' : 'Desactivar')}
             </button>
             <button
               type="button"
