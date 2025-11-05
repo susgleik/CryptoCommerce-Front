@@ -79,7 +79,6 @@ export interface ProductFilters {
   category: string;
   status: 'all' | 'active' | 'inactive' | 'out_of_stock';
   is_featured: boolean | null;
-  product_type: string;
   price_min: number | null;
   price_max: number | null;
 }

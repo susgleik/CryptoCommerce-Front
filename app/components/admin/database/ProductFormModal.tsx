@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Product, CreateProductDTO, UpdateProductDTO, ProductFormErrors } from '@/app/lib/types/product'
+import { Category } from '@/app/lib/types/category'
 import { productService } from '@/app/lib/services/productService'
+import { categoryService } from '@/app/lib/services/categoryService'
 
 interface ProductFormModalProps {
   isOpen: boolean
@@ -25,10 +27,32 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
     is_active: true,
     product_type: 'general',
     product_image: '',
-    supplier_id: ''
+    supplier_id: '',
+    category_ids: [] as number[]
   })
   const [errors, setErrors] = useState<ProductFormErrors>({})
   const [loading, setLoading] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loadingCategories, setLoadingCategories] = useState(false)
+
+  // Cargar categorías cuando se abre el modal
+  useEffect(() => {
+    if (isOpen) {
+      loadCategories()
+    }
+  }, [isOpen])
+
+  const loadCategories = async () => {
+    try {
+      setLoadingCategories(true)
+      const data = await categoryService.getCategories(0, 500, { is_active: true })
+      setCategories(data)
+    } catch (error) {
+      console.error('Error loading categories:', error)
+    } finally {
+      setLoadingCategories(false)
+    }
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -44,7 +68,8 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
           is_active: product.is_active,
           product_type: product.product_type,
           product_image: product.product_image || '',
-          supplier_id: product.supplier_id?.toString() || ''
+          supplier_id: product.supplier_id?.toString() || '',
+          category_ids: product.categories?.map(cat => cat.category_id) || []
         })
       } else {
         setFormData({
@@ -58,7 +83,8 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
           is_active: true,
           product_type: 'general',
           product_image: '',
-          supplier_id: ''
+          supplier_id: '',
+          category_ids: []
         })
       }
       setErrors({})
@@ -129,7 +155,7 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
         product_type: formData.product_type,
         product_image: formData.product_image.trim() || undefined,
         supplier_id: formData.supplier_id ? parseInt(formData.supplier_id) : null,
-        category_ids: []
+        category_ids: formData.category_ids
       }
 
       if (mode === 'create') {
@@ -147,18 +173,30 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
     }
   }
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: string, value: string | boolean | number[]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }))
-    
+
     if (errors[field as keyof ProductFormErrors]) {
       setErrors(prev => ({
         ...prev,
         [field]: undefined
       }))
     }
+  }
+
+  const handleCategoryToggle = (categoryId: number) => {
+    setFormData(prev => {
+      const isSelected = prev.category_ids.includes(categoryId)
+      return {
+        ...prev,
+        category_ids: isSelected
+          ? prev.category_ids.filter(id => id !== categoryId)
+          : [...prev.category_ids, categoryId]
+      }
+    })
   }
 
   if (!isOpen) return null
@@ -281,23 +319,53 @@ export default function ProductFormModal({ isOpen, mode, product, onClose, onSav
                 {errors.release_date && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.release_date}</p>}
               </div>
 
-              {/* Product Type */}
+              {/* Categorías */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Tipo de Producto
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Categorías del Producto *
                 </label>
-                <select
-                  value={formData.product_type}
-                  onChange={(e) => handleInputChange('product_type', e.target.value)}
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                >
-                  <option value="general">General</option>
-                  <option value="electronics">Electrónicos</option>
-                  <option value="clothing">Ropa</option>
-                  <option value="books">Libros</option>
-                  <option value="sports">Deportes</option>
-                  <option value="home">Hogar</option>
-                </select>
+                {loadingCategories ? (
+                  <div className="flex items-center justify-center py-4 text-gray-500 dark:text-gray-400">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 dark:border-blue-400 mr-2"></div>
+                    Cargando categorías...
+                  </div>
+                ) : categories.length === 0 ? (
+                  <div className="text-sm text-gray-500 dark:text-gray-400 py-3 px-4 bg-gray-50 dark:bg-gray-700/50 rounded-md">
+                    No hay categorías disponibles. Crea categorías primero en la sección de Categorías.
+                  </div>
+                ) : (
+                  <div className="border border-gray-300 dark:border-gray-600 rounded-md p-3 bg-white dark:bg-gray-700 max-h-48 overflow-y-auto">
+                    <div className="space-y-2">
+                      {categories.map((category) => (
+                        <label
+                          key={category.category_id}
+                          className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-md cursor-pointer transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.category_ids.includes(category.category_id)}
+                            onChange={() => handleCategoryToggle(category.category_id)}
+                            className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
+                          />
+                          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                            {category.name}
+                            {category.parent_category_id && (
+                              <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                                (Subcategoría)
+                              </span>
+                            )}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  {formData.category_ids.length === 0
+                    ? 'Selecciona al menos una categoría para clasificar el producto'
+                    : `${formData.category_ids.length} categoría${formData.category_ids.length !== 1 ? 's' : ''} seleccionada${formData.category_ids.length !== 1 ? 's' : ''}`
+                  }
+                </p>
               </div>
 
               {/* Description */}

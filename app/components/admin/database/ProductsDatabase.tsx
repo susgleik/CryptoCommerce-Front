@@ -25,7 +25,6 @@ export default function ProductsDatabase() {
     category: 'all',
     status: 'all',
     is_featured: null,
-    product_type: 'all',
     price_min: null,
     price_max: null
   })
@@ -97,25 +96,21 @@ export default function ProductsDatabase() {
                          product.sku.toLowerCase().includes(filters.search.toLowerCase()) ||
                          product.description.toLowerCase().includes(filters.search.toLowerCase())
 
-    const matchesStatus = filters.status === 'all' || 
+    const matchesStatus = filters.status === 'all' ||
       (filters.status === 'active' && product.is_active && product.online_stock > 0) ||
       (filters.status === 'inactive' && !product.is_active) ||
       (filters.status === 'out_of_stock' && product.is_active && product.online_stock === 0)
 
     const matchesFeatured = filters.is_featured === null || product.is_featured === filters.is_featured
 
-    const matchesProductType = filters.product_type === 'all' || product.product_type === filters.product_type
+    const matchesCategory = filters.category === 'all' ||
+      (product.categories && product.categories.some(cat => cat.name === filters.category))
 
     const matchesPrice = (filters.price_min === null || product.price >= filters.price_min) &&
                         (filters.price_max === null || product.price <= filters.price_max)
 
-    return matchesSearch && matchesStatus && matchesFeatured && matchesProductType && matchesPrice
+    return matchesSearch && matchesStatus && matchesFeatured && matchesCategory && matchesPrice
   })
-
-  const getUniqueProductTypes = () => {
-    const types = [...new Set(products.map(p => p.product_type))]
-    return types.filter(type => type && type.trim() !== '')
-  }
 
   if (loading) {
     return (
@@ -192,16 +187,16 @@ export default function ProductsDatabase() {
             </select>
           </div>
 
-          {/* Product Type Filter */}
+          {/* Category Filter */}
           <div>
             <select
-              value={filters.product_type}
-              onChange={(e) => setFilters(prev => ({ ...prev, product_type: e.target.value }))}
+              value={filters.category}
+              onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
               className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
-              <option value="all">Todos los tipos</option>
-              {getUniqueProductTypes().map(type => (
-                <option key={type} value={type}>{type}</option>
+              <option value="all">Todas las categorías</option>
+              {[...new Set(products.flatMap(p => p.categories?.map(c => c.name) || []))].map(categoryName => (
+                <option key={categoryName} value={categoryName}>{categoryName}</option>
               ))}
             </select>
           </div>
@@ -284,7 +279,7 @@ export default function ProductsDatabase() {
                   Estado
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Tipo
+                  Categorías
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Acciones
@@ -348,8 +343,21 @@ export default function ProductsDatabase() {
                       {productService.getStatusLabel(product)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900 dark:text-gray-100">{product.product_type}</span>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1 max-w-xs">
+                      {product.categories && product.categories.length > 0 ? (
+                        product.categories.map((category, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400"
+                          >
+                            {category.name}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs text-gray-500 dark:text-gray-400 italic">Sin categoría</span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
